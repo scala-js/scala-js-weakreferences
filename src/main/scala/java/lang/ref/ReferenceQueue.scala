@@ -15,10 +15,14 @@ package java.lang.ref
 import scala.scalajs.js
 
 class ReferenceQueue[T] {
-  import ReferenceQueue._
-
-  private[this] var first: Node[T] = null
-  private[this] var last: Node[T] = null
+  /** The "enqueued" References.
+   *
+   *  Despite the name, this is used more as a stack (LIFO) than as a queue
+   *  (FIFO). The JavaDoc of `ReferenceQueue` does not actually prescribe FIFO
+   *  ordering, and experimentation shows that the JVM implementation does not
+   *  guarantee that ordering.
+   */
+  private[this] val enqueuedRefs = js.Array[Reference[_ <: T]]()
 
   private[this] val finalizationRegistry = {
     new js.FinalizationRegistry[T, Reference[_ <: T], Reference[_ <: T]]({
@@ -37,31 +41,19 @@ class ReferenceQueue[T] {
       false
     } else {
       ref.enqueued = true
-      val newNode = new Node[T](ref, null)
-      if (last == null)
-        first = newNode
-      else
-        last.next = newNode
-      last = newNode
+      enqueuedRefs.push(ref)
       true
     }
   }
 
   def poll(): Reference[_ <: T] = {
-    val result = first
-    if (result != null) {
-      first = result.next
-      result.ref
-    } else {
+    if (enqueuedRefs.length == 0)
       null
-    }
+    else
+      enqueuedRefs.pop()
   }
 
   // Not implemented because they have a blocking contract:
   //def remove(timeout: Long): Reference[_ <: T] = ???
   //def remove(): Reference[_ <: T] = ???
-}
-
-private object ReferenceQueue {
-  private final class Node[T](val ref: Reference[_ <: T], var next: Node[T])
 }
