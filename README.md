@@ -10,7 +10,7 @@ Attempts to use `WeakReference` or `ReferenceQueue` will throw `ReferenceError`s
 Add the following dependency to your project settings:
 
 ```scala
-libraryDependencies += "org.scala-js" %%% "scalajs-weakreferences" % "1.0.0-SNAPSHOT"
+libraryDependencies += "org.scala-js" %%% "scalajs-weakreferences" % "1.0.0"
 ```
 
 When using a `crossProject`, add the above in `.jsSettings(...)`.
