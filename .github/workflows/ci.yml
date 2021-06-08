@@ -19,18 +19,6 @@ jobs:
         with:
           java-version: "adopt@1.8"
       - uses: coursier/cache-action@v5
-      - uses: actions/checkout@v2
-        with:
-          repository: scala-js/scala-js
-          ref: e38b86aef95ac074fe84e7fda3e22e08a723a91b
-          path: ./scalajs-nightly
-      - name: publishLocal Scala.js nightly
-        run: |
-          sbt ";ir2_12/publishLocal;linkerInterface2_12/publishLocal;linker2_12/publishLocal;testAdapter2_12/publishLocal;sbtPlugin/publishLocal"
-          sbt ";compiler2_11/publishLocal;library2_11/publishLocal;testInterface2_11/publishLocal;testBridge2_11/publishLocal;jUnitRuntime2_11/publishLocal;jUnitPlugin2_11/publishLocal"
-          sbt ";compiler2_12/publishLocal;library2_12/publishLocal;testInterface2_12/publishLocal;testBridge2_12/publishLocal;jUnitRuntime2_12/publishLocal;jUnitPlugin2_12/publishLocal"
-          sbt ";compiler2_13/publishLocal;library2_13/publishLocal;testInterface2_13/publishLocal;testBridge2_13/publishLocal;jUnitRuntime2_13/publishLocal;jUnitPlugin2_13/publishLocal"
-        working-directory: ./scalajs-nightly
       - name: Test JVM
         run: sbt "++${{ matrix.scalaversion }}" testSuiteJVM/test
       - name: Test JS
